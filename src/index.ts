@@ -28,8 +28,8 @@ async function updateEvents() {
 }
 
 async function startEvent() {
-    //pupeteer stuff
+    //puppeteer stuff
 }
 
-//start everuthing
+//start everything
 updateEvents()
