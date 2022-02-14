@@ -10,7 +10,8 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
-    "start:dev": "nodemon"
+    "start:dev": "nodemon",
+    "start": "ts-node ./src/index.ts"
   },
   "keywords": [],
   "author": "",
