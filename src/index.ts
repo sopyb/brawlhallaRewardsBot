@@ -1,5 +1,5 @@
 import axios from "axios"
-import puppeteer, { Browser, Page } from "puppeteer"
+import puppeteer from "puppeteer"
 import * as config from "./config.json"
 import Event from "./event"
 import Utils from "./utils"
