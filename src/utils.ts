@@ -4,16 +4,15 @@ import { existsSync } from "node:fs"
 
 function getChromeDataDir(): string {
     switch (os.platform()) {
-        // need to test
-        // case "win32":
-        //     if (existsSync(path.resolve("%LOCALAPPDATA%\Google\Chrome\User Data"))) return "%LOCALAPPDATA%\Google\Chrome\User Data"
-        //     if (existsSync(path.resolve("%LOCALAPPDATA%\Google\Chrome Beta\User Data"))) return "%LOCALAPPDATA%\Google\Chrome Beta\User Data"
-        //     if (existsSync(path.resolve("%LOCALAPPDATA%\Google\Chrome SxS\User Data"))) return "%LOCALAPPDATA%\Google\Chrome SxS\User Data"
-        //     if (existsSync(path.resolve("%LOCALAPPDATA%\Chromium\User Data"))) return "%LOCALAPPDATA%\Chromium\User Data"
-        //     break;
-
-        // case "darwin":
-        //  I don't own a mac <.< maybe someone who does might wanna reach out?
+        //I don't have a mac so... umm an attempt has been made
+        case "darwin":
+            let applications = path.resolve(process.env.HOME + "/Library/Application Support/"),
+                google = applications + "/Google/Chrome"
+            if(existsSync(applications + "/Chromium")) return applications + "/Chromium"
+            if(existsSync(google)) return google
+            if(existsSync(google + " Beta")) return google + " Beta"
+            if(existsSync(google + " Canary")) return google + " Canary"
+            break;
 
         case "linux":
             let config = path.resolve(process.env.HOME + "/.config")
@@ -21,6 +20,15 @@ function getChromeDataDir(): string {
             if(existsSync(config + "/google-chrome")) return config + "/google-chrome"
             if(existsSync(config +"/google-chrome-beta")) return config +"/google-chrome-beta"
             if(existsSync(config + "/google-chrome-unstable")) return config + "/google-chrome-unstable"
+            break;
+
+        // need to test
+        case "win32":
+            let localAppData = path.resolve(process.env.LOCALAPPDATA || "")
+            if (existsSync(localAppData + "\\Chromium")) return localAppData + "\\Chromium\\User Data"
+            if (existsSync(localAppData + "\\Google\\Chrome")) return localAppData + "\\Google\\Chrome\\User Data"
+            if (existsSync(localAppData + "\\Google\\Chrome Beta")) return localAppData + "\\Google\\Chrome Beta\\User Data"
+            if (existsSync(localAppData + "\\Google\\Chrome SxS")) return localAppData + "\\Google\\Chrome SxS\\User Data"
             break;
     }
     return ""
