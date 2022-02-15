@@ -14,27 +14,38 @@ async function updateEvents() {
     //check for events that have passed
     events.filter(e => new Date(e.end_dt).getTime() >= now)
 
-    events.forEach(e => {
-        let startTime = new Date(e.end_dt).getTime() // get start time
+    console.log(`Loaded ${events.length} events at ${new Date()}`)
 
-        //schedule browser start
-        setTimeout( () => {startEvent(e)}, Math.max(startTime - now, 0))
+    events.forEach(e => {
+        console.log(`* ${e.title} - ${new Date(e.start_dt)}`)
+
+        let startTime = new Date(e.end_dt).getTime() // get start time
+        setTimeout(() => {startEvent(e)}, Math.max(startTime - now, 0)) // schedule browser start
     });
 
     let midnight = new Date()
     midnight.setUTCHours(24, 0, 0, 0)
 
     setInterval(updateEvents, midnight.getTime() - now)
+
+    // startEvent(events[0]) // debugging line DUH!
 }
 
 async function startEvent(event: Event) {
+    console.log(`Event: ${event.title} is about to begin`)
+
+    //create browser context and goto page
     let browser = await puppeteer.launch({
-        headless:false,
+        headless: false,
         defaultViewport: null,
         userDataDir: Utils.getChromeDataDir()}),
         page = await browser.newPage();
-    await page.goto(config.stream_url)
+    await page.goto(config.stream_url);
 
+    // click chat button if steam is still yet to start
+    (await page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div'))?.[0]?.click()
+
+    // schedule end
     let now: number = Date.now()
     setTimeout(browser.close, new Date(event.end_dt).getTime() - now)
 }
