@@ -1,6 +1,9 @@
 import axios from "axios"
+import puppeteer from "puppeteer"
+import { existsSync, mkdirSync } from "fs"
 import * as config from "./config.json"
 import Event from "./event"
+import Utils from "./utils"
 
 async function updateEvents() {
     //Get today's event list
@@ -20,15 +23,19 @@ async function updateEvents() {
     });
 
     let midnight = new Date()
-        midnight.setUTCHours(24,0,0,0)
+    midnight.setUTCHours(24, 0, 0, 0)
 
     setInterval(updateEvents, midnight.getTime() - now)
-
-    console.log(midnight.getTime() - now)
 }
 
 async function startEvent() {
-    //puppeteer stuff
+    let browser = await puppeteer.launch({
+        headless:false,
+        defaultViewport: null,
+        userDataDir: Utils.getChromeDataDir()}),
+        page = await browser.newPage();
+    
+    await page.goto(config.stream_url)
 }
 
 //start everything
