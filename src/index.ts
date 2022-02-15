@@ -10,9 +10,9 @@ async function updateEvents() {
         .get(config.calendar_url)).data.events
 
     let now: number = Date.now() // time now <.< we need it
-
+    
     //check for events that have passed
-    events.filter(e => new Date(e.end_dt).getTime() >= now)
+    events = events.filter(e => new Date(e.end_dt).getTime() >= now)
 
     console.log(`Loaded ${events.length} events at ${new Date()}`)
 
