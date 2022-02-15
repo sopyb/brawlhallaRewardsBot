@@ -42,25 +42,25 @@ async function startEvent(event: Event) {
         executablePath: '/usr/bin/google-chrome-stable'}),
         page = await browser.newPage();
 
-        await page.goto(config.stream_url);
+    await page.goto(config.stream_url);
 
-        await page.evaluate(`
-            localStorage.setItem('mature', 'true')
-            localStorage.setItem('video-muted', '{"default":true}')
-            localStorage.setItem('volume', '0.01')
-            localStorage.setItem('video-quality', '{"default":"160p30"}')
-        `)
-        
-        await page.reload();
+    await page.evaluate(`
+        localStorage.setItem('mature', 'true')
+        localStorage.setItem('video-muted', '{"default":true}')
+        localStorage.setItem('volume', '0.01')
+        localStorage.setItem('video-quality', '{"default":"160p30"}')
+    `)
+    
+    await page.reload();
 
     // click chat button if steam is still yet to start
-    page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div')
+    await page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div')
         .then(e => e[0]?.click())
         .catch(console.log)
 
     // schedule end
     let now: number = Date.now()
-    setTimeout(browser.close, new Date(event.end_dt).getTime() - now)
+    setTimeout(() => {browser.close()}, new Date(event.end_dt).getTime() - now)
 }
 
 //start everything
