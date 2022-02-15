@@ -19,7 +19,7 @@ async function updateEvents() {
     events.forEach(e => {
         console.log(`* ${e.title} - ${new Date(e.start_dt)}`)
 
-        let startTime = new Date(e.end_dt).getTime() // get start time
+        let startTime = new Date(e.start_dt).getTime() // get start time
         setTimeout(() => {startEvent(e)}, Math.max(startTime - now, 0)) // schedule browser start
     });
 
@@ -38,12 +38,25 @@ async function startEvent(event: Event) {
     let browser = await puppeteer.launch({
         headless: false,
         defaultViewport: null,
-        userDataDir: Utils.getChromeDataDir()}),
+        userDataDir: Utils.getChromeDataDir(),
+        executablePath: '/usr/bin/google-chrome-stable'}),
         page = await browser.newPage();
-    await page.goto(config.stream_url);
+
+        await page.goto(config.stream_url);
+
+        await page.evaluate(`
+            localStorage.setItem('mature', 'true')
+            localStorage.setItem('video-muted', '{"default":true}')
+            localStorage.setItem('volume', '0.01')
+            localStorage.setItem('video-quality', '{"default":"160p30"}')
+        `)
+        
+        await page.reload();
 
     // click chat button if steam is still yet to start
-    (await page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div'))?.[0]?.click()
+    page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div')
+        .then(e => e[0]?.click())
+        .catch(console.log)
 
     // schedule end
     let now: number = Date.now()
