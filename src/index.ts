@@ -1,6 +1,5 @@
 import axios from "axios"
-import puppeteer from "puppeteer"
-import { existsSync, mkdirSync } from "fs"
+import puppeteer, { Browser, Page } from "puppeteer"
 import * as config from "./config.json"
 import Event from "./event"
 import Utils from "./utils"
@@ -19,7 +18,7 @@ async function updateEvents() {
         let startTime = new Date(e.end_dt).getTime() // get start time
 
         //schedule browser start
-        setTimeout(startEvent, Math.max(startTime - now, 0))
+        setTimeout( () => {startEvent(e)}, Math.max(startTime - now, 0))
     });
 
     let midnight = new Date()
@@ -28,14 +27,16 @@ async function updateEvents() {
     setInterval(updateEvents, midnight.getTime() - now)
 }
 
-async function startEvent() {
+async function startEvent(event: Event) {
     let browser = await puppeteer.launch({
         headless:false,
         defaultViewport: null,
         userDataDir: Utils.getChromeDataDir()}),
         page = await browser.newPage();
-    
     await page.goto(config.stream_url)
+
+    let now: number = Date.now()
+    setTimeout(browser.close, new Date(event.end_dt).getTime() - now)
 }
 
 //start everything
