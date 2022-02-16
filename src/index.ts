@@ -27,7 +27,7 @@ async function updateEvents() {
     midnight.setUTCHours(24, 0, 0, 0)
 
     setInterval(updateEvents, midnight.getTime() - now)
-
+    
     // startEvent(events[0]) // debugging line DUH!
 }
 
@@ -39,7 +39,7 @@ async function startEvent(event: Event) {
         headless: false,
         defaultViewport: null,
         userDataDir: Utils.getChromeDataDir(),
-        executablePath: '/usr/bin/google-chrome-stable'}),
+        executablePath: Utils.getChromeExecutable()}),
         page = await browser.newPage();
 
     await page.goto(config.stream_url);
