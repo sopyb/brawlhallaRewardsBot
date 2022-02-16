@@ -7,6 +7,7 @@ Either-way now you can just let this script run in the background that makes sur
 The script spawns a Chromium window to load the Brawlhalla twitch channel whenever a stream is scheduled to start. 
 
 ## Prerequisites
+* Windows or Linux... if any mac user wants to use this please contact me I don't own a mac so I can't find chrome paths ❤️
 * Node 16+
 * Chromium (Google Chrome)
 * Being logged into a twitch account in your browser
