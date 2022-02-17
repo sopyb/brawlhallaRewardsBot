@@ -1,5 +1,5 @@
 import axios from "axios"
-import puppeteer from "puppeteer"
+import puppeteer, { Page } from "puppeteer"
 import * as config from "./config.json"
 import Event from "./event"
 import Utils from "./utils"
@@ -57,10 +57,22 @@ async function startEvent(event: Event) {
     await page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div')
         .then(e => e[0]?.click())
         .catch(console.log)
+    
+    // collect channel points
+    page.setDefaultTimeout(0)
+    waitForPoints(page)
 
     // schedule end
     let now: number = Date.now()
     setTimeout(() => {browser.close()}, new Date(event.end_dt).getTime() - now)
+}
+
+async function waitForPoints(page: Page) {
+    await page.waitForSelector(".ScCoreButtonSuccess-sc-1qn4ixc-5 > div:nth-child(1)", {visible: true})
+        .then(async () => (await page.$(".ScCoreButtonSuccess-sc-1qn4ixc-5 > div:nth-child(1)"))?.click())
+        .catch(console.error)
+    
+    waitForPoints(page)
 }
 
 //start everything
