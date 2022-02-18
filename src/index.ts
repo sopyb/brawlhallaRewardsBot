@@ -62,9 +62,26 @@ async function startEvent(event: Event) {
     page.setDefaultTimeout(0)
     waitForPoints(page)
 
+    // check if stream started or refresh the page
+    setTimeout(() => {checkStreamStarted(page)}, 60000)
+
     // schedule end
     let now: number = Date.now()
     setTimeout(() => {browser.close()}, new Date(event.end_dt).getTime() - now)
+}
+
+async function checkStreamStarted(page: Page) {
+    // big thanks to dortzur - https://stackoverflow.com/questions/41649874/how-to-detect-if-a-chrome-tab-is-playing-audio
+    if (await page.evaluate("!Array.prototype.find.call(document.querySelectorAll('audio,video'),function(elem){return elem.duration > 0 && !elem.paused})")) {
+        await page.reload()
+        
+        // click chat button if steam is still yet to start
+        await page.$x('//*[@id="root"]/div/div[2]/div[1]/main/div[2]/div[3]/div/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div/div/ul/li[5]/a/div/div[1]/div')
+            .then(e => e[0]?.click())
+            .catch(console.log)
+        
+        setTimeout(() => {checkStreamStarted(page)}, 60000)
+    }
 }
 
 async function waitForPoints(page: Page) {
